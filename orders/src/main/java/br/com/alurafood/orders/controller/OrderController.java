@@ -8,6 +8,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,11 @@ public class OrderController {
         OrderDTO orderDTO = orderService.getById(id);
 
         return ResponseEntity.ok(orderDTO);
+    }
+
+    @GetMapping("/port")
+    public String getInstance(@Value("${local.server.port}") String port) {
+        return String.format("Request responsed for instance executing on port: %s", port);
     }
 
     @PostMapping
