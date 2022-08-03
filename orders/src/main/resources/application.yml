@@ -1,11 +1,12 @@
+
 spring:
   application:
-    name: 'payments'
+    name: 'orders'
 
   datasource:
     password: '@Teste123'
     username: 'teste'
-    url: jdbc:mysql://localhost:3306/alurafood_payments?createDatabaseIfNotExist=true&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/alurafood_orders?createDatabaseIfNotExist=true&serverTimezone=UTC
 
   jpa:
     hibernate:
