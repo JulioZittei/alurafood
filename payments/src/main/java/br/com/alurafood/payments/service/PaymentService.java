@@ -1,6 +1,7 @@
 package br.com.alurafood.payments.service;
 
 import br.com.alurafood.payments.dto.PaymentDTO;
+import br.com.alurafood.payments.http.OrderClient;
 import br.com.alurafood.payments.model.Payment;
 import br.com.alurafood.payments.model.Status;
 import br.com.alurafood.payments.repository.PaymentRepository;
@@ -16,6 +17,9 @@ public class PaymentService {
 
     @Autowired
     private PaymentRepository paymentRepository;
+
+    @Autowired
+    private OrderClient orderClient;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -50,5 +54,22 @@ public class PaymentService {
 
     public void delete(Long id) {
         paymentRepository.deleteById(id);
+    }
+
+    public void approvePayment(Long id) {
+        Payment payment = paymentRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+
+        payment.setStatus(Status.CONFIRMED);
+        paymentRepository.save(payment);
+        orderClient.approvePayment(payment.getOrderId());
+    }
+
+    public void alterStatus(Long id) {
+        Payment payment = paymentRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+
+        payment.setStatus(Status.PENDING);
+        paymentRepository.save(payment);
     }
 }
