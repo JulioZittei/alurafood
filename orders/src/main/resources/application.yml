@@ -8,6 +8,20 @@ spring:
     username: 'teste'
     url: jdbc:mysql://localhost:3306/alurafood_orders?createDatabaseIfNotExist=true&serverTimezone=UTC
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+    listener:
+      simple:
+        retry:
+          enabled: true
+          initial-interval: 5000
+          max-attempts: 3
+          max-interval: 300000
+          multiplier: 2
+
   jpa:
     hibernate:
       ddl-auto: validate
@@ -23,4 +37,4 @@ spring:
       instance-id: ${spring.application.name}:${random.int}
 
 server:
-  port: 0
+  port: 8081

@@ -35,7 +35,7 @@ public class Order {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private OrderStatus status;
 
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "order")
     private List<OrderItem> items = new ArrayList<OrderItem>();

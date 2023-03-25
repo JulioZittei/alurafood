@@ -1,12 +1,17 @@
 package br.com.alurafood.payments.controller;
 
+import br.com.alurafood.payments.amqp.message.PaymentMessage;
 import br.com.alurafood.payments.dto.PaymentDTO;
 import br.com.alurafood.payments.service.PaymentService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import java.net.URI;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -23,11 +28,18 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("/payments")
+@RequestMapping("/")
+@AllArgsConstructor
 public class PaymentController {
 
-    @Autowired
-    private PaymentService paymentService;
+    private final PaymentService paymentService;
+
+    private final RabbitTemplate rabbitTemplate;
+
+    private final ObjectMapper objectMapper;
+
+    private final ModelMapper modelMapper;
+
 
     @GetMapping
     public Page<PaymentDTO> getAll(@PageableDefault(size = 10)Pageable pagination) {
@@ -41,9 +53,16 @@ public class PaymentController {
     }
 
     @PostMapping
-    public ResponseEntity<PaymentDTO> create(@RequestBody @Valid PaymentDTO payment, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<PaymentDTO> create(@RequestBody @Valid PaymentDTO payment, UriComponentsBuilder uriBuilder)
+            throws JsonProcessingException {
         PaymentDTO paymentDTO = paymentService.create(payment);
-        URI address = uriBuilder.path("/payments/{id}").buildAndExpand(paymentDTO.getId()).toUri();
+        URI address = uriBuilder.path("/{id}").buildAndExpand(paymentDTO.getId()).toUri();
+
+        PaymentMessage paymentMessage = modelMapper.map(paymentDTO, PaymentMessage.class);
+//        Message message = new Message(objectMapper.writeValueAsBytes(paymentMessage));
+//        rabbitTemplate.send("payment.confirmed", message);
+
+        rabbitTemplate.convertAndSend("payments.ex", "", paymentMessage);
 
         return ResponseEntity.created(address).body(paymentDTO);
     }

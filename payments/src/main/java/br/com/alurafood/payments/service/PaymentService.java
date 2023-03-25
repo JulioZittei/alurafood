@@ -3,7 +3,7 @@ package br.com.alurafood.payments.service;
 import br.com.alurafood.payments.dto.PaymentDTO;
 import br.com.alurafood.payments.http.OrderClient;
 import br.com.alurafood.payments.model.Payment;
-import br.com.alurafood.payments.model.Status;
+import br.com.alurafood.payments.model.PaymentStatus;
 import br.com.alurafood.payments.repository.PaymentRepository;
 import javax.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -39,7 +39,7 @@ public class PaymentService {
 
     public PaymentDTO create(PaymentDTO paymentDTO) {
         Payment payment = modelMapper.map(paymentDTO, Payment.class);
-        payment.setStatus(Status.CREATED);
+        payment.setStatus(PaymentStatus.CREATED);
         paymentRepository.save(payment);
 
         return modelMapper.map(payment, PaymentDTO.class);
@@ -60,7 +60,7 @@ public class PaymentService {
         Payment payment = paymentRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
 
-        payment.setStatus(Status.CONFIRMED);
+        payment.setStatus(PaymentStatus.CONFIRMED);
         paymentRepository.save(payment);
         orderClient.approvePayment(payment.getOrderId());
     }
@@ -69,7 +69,7 @@ public class PaymentService {
         Payment payment = paymentRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
 
-        payment.setStatus(Status.PENDING);
+        payment.setStatus(PaymentStatus.PENDING);
         paymentRepository.save(payment);
     }
 }

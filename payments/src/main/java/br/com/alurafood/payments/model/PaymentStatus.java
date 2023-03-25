@@ -1,6 +1,6 @@
 package br.com.alurafood.payments.model;
 
-public enum Status {
+public enum PaymentStatus {
     CREATED,
     CONFIRMED,
     PENDING,

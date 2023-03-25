@@ -1,5 +1,6 @@
 package br.com.alurafood.orders.dto;
 
+import br.com.alurafood.orders.model.OrderStatus;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ public class OrderDTO {
 
     private Long id;
     private LocalDateTime createdAt;
-    private StatusDTO status;
+    private OrderStatus status;
     private List<OrderItemDTO> items = new ArrayList<OrderItemDTO>();
 
 }

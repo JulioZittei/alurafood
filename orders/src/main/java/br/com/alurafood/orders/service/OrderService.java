@@ -1,9 +1,8 @@
 package br.com.alurafood.orders.service;
 
 import br.com.alurafood.orders.dto.OrderDTO;
-import br.com.alurafood.orders.dto.StatusDTO;
 import br.com.alurafood.orders.model.Order;
-import br.com.alurafood.orders.model.Status;
+import br.com.alurafood.orders.model.OrderStatus;
 import br.com.alurafood.orders.repository.OrderRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,8 +29,8 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    public OrderDTO getById(Long id) {
-        Order order = orderRepository.findById(id)
+    public OrderDTO getById(Long orderId) {
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(EntityNotFoundException::new);
 
         return modelMapper.map(order, OrderDTO.class);
@@ -41,33 +40,33 @@ public class OrderService {
         Order order = modelMapper.map(orderDTO, Order.class);
 
         order.setCreatedAt(LocalDateTime.now());
-        order.setStatus(Status.ORDERED);
+        order.setStatus(OrderStatus.ORDERED);
         order.getItems().forEach(item -> item.setOrder(order));
         Order savedOrder = orderRepository.save(order);
 
         return modelMapper.map(savedOrder, OrderDTO.class);
     }
 
-    public OrderDTO updateStatus(Long id, StatusDTO statusDTO) {
-        Order order = orderRepository.findByIdWithItems(id);
+    public OrderDTO updateStatus(Long orderId, OrderStatus status) {
+        Order order = orderRepository.findByIdWithItems(orderId);
 
         if (order == null) {
             throw new EntityNotFoundException();
         }
 
-        order.setStatus(statusDTO.getStatus());
-        orderRepository.updateStatus(statusDTO.getStatus(), order);
+        order.setStatus(status);
+        orderRepository.updateStatus(status, order);
         return modelMapper.map(order, OrderDTO.class);
     }
 
-    public void approvePayment(Long id) {
-        Order order = orderRepository.findByIdWithItems(id);
+    public void approvePayment(Long orderId) {
+        Order order = orderRepository.findByIdWithItems(orderId);
 
         if (order == null) {
             throw new EntityNotFoundException();
         }
 
-        order.setStatus(Status.PAYED);
-        orderRepository.updateStatus(Status.PAYED, order);
+        order.setStatus(OrderStatus.PAYED);
+        orderRepository.updateStatus(OrderStatus.PAYED, order);
     }
 }

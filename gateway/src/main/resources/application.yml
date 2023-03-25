@@ -4,16 +4,14 @@ server:
 spring:
   application:
     name: 'gateway'
-  cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
 
 eureka:
   client:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+    statusPageUrlPath: ${eureka.instance.hostname}/info
+    healthCheckUrlPath: ${eureka.instance.hostname}/health

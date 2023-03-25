@@ -39,19 +39,19 @@ public class Payment {
 
     @NotBlank
     @Size(max = 19)
-    private String number;
+    private String cardNumber;
 
     @NotBlank
     @Size(max = 7)
-    private String expiration;
+    private String cardExpiration;
 
     @NotBlank
     @Size(min = 3, max = 3)
-    private String code;
+    private String cardCode;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private PaymentStatus status;
 
     @NotNull
     private Long orderId;

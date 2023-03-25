@@ -1,7 +1,7 @@
 package br.com.alurafood.orders.controller;
 
 import br.com.alurafood.orders.dto.OrderDTO;
-import br.com.alurafood.orders.dto.StatusDTO;
+import br.com.alurafood.orders.dto.OrderStatusDTO;
 import br.com.alurafood.orders.service.OrderService;
 import java.net.URI;
 import java.util.List;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/")
 public class OrderController {
 
     @Autowired
@@ -53,8 +53,8 @@ public class OrderController {
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<OrderDTO> updateStatus(@PathVariable Long id, @RequestBody StatusDTO statusDTO) {
-        OrderDTO orderDTO = orderService.updateStatus(id, statusDTO);
+    public ResponseEntity<OrderDTO> updateStatus(@PathVariable Long id, @RequestBody OrderStatusDTO orderStatusDTO) {
+        OrderDTO orderDTO = orderService.updateStatus(id, orderStatusDTO.getStatus());
 
         return ResponseEntity.ok().build();
     }
